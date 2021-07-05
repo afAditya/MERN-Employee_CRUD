@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Pagination from "../layout/pagination";
 
 const Home = () => {
   const [employees, setEmployee] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postPerPage] = useState(10);
 
   useEffect(() => {
     loadEmployees();
@@ -13,6 +16,12 @@ const Home = () => {
     const result = await axios.get("http://localhost:3001/employee");
     setEmployee(result.data);
   };
+
+  const indexOfLastPage = currentPage * postPerPage;
+  const indexOfFirstPage = indexOfLastPage - postPerPage;
+  const currentPosts = employees.slice(indexOfFirstPage, indexOfLastPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const deleteEmployee = async (id) => {
     await axios.delete(`http://localhost:3001/employee/${id}`);
@@ -36,7 +45,7 @@ const Home = () => {
             </tr>
           </thead>
           <tbody>
-            {employees.map((employee, index) => (
+            {currentPosts.map((employee, index) => (
               <tr>
                 <th scope="row">{index + 1}</th>
                 <td>{employee.name}</td>
@@ -62,6 +71,11 @@ const Home = () => {
             ))}
           </tbody>
         </table>
+        <Pagination
+          postPerPage={postPerPage}
+          totalPosts={employees.length}
+          paginate={paginate}
+        />
       </div>
     </div>
   );
