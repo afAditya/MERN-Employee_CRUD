@@ -15,7 +15,7 @@ router.post("/employee", async (req, res) => {
 
 router.get("/employee", async (req, res) => {
   try {
-    const employees = await Employee.find({}).limit(10);
+    const employees = await Employee.find({});
     res.send(employees);
   } catch (e) {
     res.status(400).send(e);
